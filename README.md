@@ -1,7 +1,8 @@
-# tjb 
-## 欢迎使用 统计帮 
+# 欢迎使用 统计帮 
 
 ### 新型冠状病毒疫情（新冠肺炎）企业日报系统 
+
+![效果图](https://github.com/csmake/tjb/blob/master/src/main/webapp/image/image1.jpg?raw=true "效果图")
 
 ## 主要特征
 
@@ -14,6 +15,10 @@
 7. 对集团化大企业支持力度很强，系统管理自上而下设计，轻松细化到5/6级下属公司。数据采集又采用自下而上，分级把关，层层确认。
 8. 管理后台与用户填报前台，都可以在手机上完成，无需准备电脑。
 
+## 扫描小程序体验
+![统计帮](https://github.com/csmake/tjb/blob/master/src/main/webapp/image/mp.png?raw=true "统计帮")
+
+## QQ交流群  1048813986
 
 
 ### 相关文档(含效果图)
@@ -21,8 +26,5 @@
 
 [发送邮件:rd@csmake.com](mailto:rd@csmake.com)
 官方网址:<http://www.csmake.com>
-
-
-### 截图欣赏
 
 
