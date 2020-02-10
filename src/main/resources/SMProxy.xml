@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config>
+    <CMPPConnect>
+       <host>47.94.193.152</host>
+       <port>7890</port>
+       <source-addr>h71061</source-addr>
+       <shared-secret>h71061@0207</shared-secret>
+       <heartbeat-interval>30</heartbeat-interval>
+       <reconnect-interval>10</reconnect-interval>
+       <heartbeat-noresponseout>5</heartbeat-noresponseout>
+       <transaction-timeout>10</transaction-timeout>
+       <version>32</version>
+       <debug>true</debug>
+    </CMPPConnect>
+</config>
