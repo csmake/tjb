@@ -4,7 +4,14 @@
 
 ![效果图](https://github.com/csmake/tjb/blob/master/src/main/webapp/image/image1.jpg?raw=true "效果图")
 
-## 主要特征
+## 技术特征
+1. HTML5 前端页面设计，可以嵌入微信小程序，网站，微信公众号，APP，钉钉等。
+2. jQuery+JavaScript，将会采用vue重构。
+3. 数据库：Mongodb4.0
+4. Java8.0 Servlet
+5. 应用服务器:Tomcat8.0 
+
+## 产品特征
 
 1. 免去微信接龙麻烦，各自分别填报，串联改并联，实时性非常高；
 2. 对管辖范围的未填人员一目了然，可以直接短信或电话催报；
@@ -19,6 +26,7 @@
 ![统计帮](https://github.com/csmake/tjb/blob/master/src/main/webapp/image/mp.png?raw=true "统计帮")
 
 ## QQ交流群  1048813986
+![QQ交流群](https://github.com/csmake/tjb/blob/master/src/main/webapp/image/qq.png?raw=true "QQ交流群")
 
 
 ### 相关文档(含效果图)
