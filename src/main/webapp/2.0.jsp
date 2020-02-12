@@ -876,7 +876,7 @@
                 }
                 var subjects = appcfg.template.subjects || [];
                 var keys = [];
-                var thead = "<tr><th>姓名</th><th>部门</th><th>手机</th>";
+                var thead = "<tr><th>填报人</th><th>公司/部门</th><th>联系方式</th>";
                 for (var i = 0; i < subjects.length; i++) {
                     var sbj = subjects[i];
                     keys.push(sbj.key);

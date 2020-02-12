@@ -1,4 +1,5 @@
 # 欢迎使用 统计帮 
+[https://github.com/csmake/tjb](https://github.com/csmake/tjb)
 
 ### 新型冠状病毒疫情企业日报系统 
 #### 新冠肺炎-新型冠状病毒（2019-nCoV）感染所致肺炎
@@ -11,6 +12,7 @@
 3. 数据库：Mongodb4.0
 4. Java8.0 Servlet
 5. 应用服务器:Tomcat8.0 
+6. 开发工具：Netbeans 8.2
 
 ![效果图](https://github.com/csmake/tjb/blob/master/src/main/webapp/image/image2.jpg?raw=true "效果图")
 
@@ -33,9 +35,14 @@
 ## QQ交流群  1048813986
 ![QQ交流群](https://github.com/csmake/tjb/blob/master/src/main/webapp/image/qq.png?raw=true "QQ交流群")
 
+##公益
+在全国各地齐心合力战“疫”的当下，《法制日报》之《法治周末》、鸿飛教育圈联袂奉献近60家、上百个教学产品，助力“停课不停学”。
+赛思美科公司推出的“统计帮”疫情日报小程序也免费向学校，教育机构开发。
+![公益](https://github.com/csmake/tjb/blob/master/src/main/webapp/image/gy.jpg?raw=true "公益")
 
 ### 相关文档(含效果图)
-使用说明：<https://jingyan.baidu.com/article/75ab0bcb14ef6997874db200.html>
+百度经验(使用说明)：<https://jingyan.baidu.com/article/75ab0bcb14ef6997874db200.html>
+CSDN:     <https://blog.csdn.net/smbrother/article/details/104258096>
 
 ### 技术支持与服务
 
@@ -46,7 +53,7 @@
 5. 广州宏景软件科技有限公司
 6. [北京畅发科技有限公司](http://www.chfatech.com)
 
-### 主要客户(截止2020年2月10日，60多家，私有部署)
+### 部署企业(截止2020年2月10日，60多家，私有部署)
 1. 中国建筑
 2. 中铝国际
 3. 北京公交
