@@ -12,12 +12,12 @@
         <link rel="shortcut icon" href="image/logo.ico">    
         <link rel="stylesheet" href="css/main.css"> 
         <link rel="stylesheet" href="//cdn.staticfile.org/weui/1.1.3/style/weui.min.css"> 
-        <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">    
-         
+        <link rel="stylesheet" href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">    
+
         <script src="//cdn.staticfile.org/jquery/1.12.0/jquery.min.js"></script>
         <script src="//res.wx.qq.com/open/js/jweixin-1.3.0.js"></script>
         <script src="//res.wx.qq.com/open/libs/weuijs/1.1.4/weui.min.js"></script>   
-        <script src="//cdn.staticfile.org/store.js/1.3.20/store.js"></script>
+        <script src="//cdn.staticfile.org/store2/2.10.0/store2.min.js"></script>
         <script src="//cdn.staticfile.org/moment.js/2.1.0/moment.min.js"></script> 
         <script src="//cdn.staticfile.org/moment.js/2.1.0/lang/zh-cn.min.js"></script>  
 
@@ -26,6 +26,7 @@
         <script type="text/javascript" src="//cdn.staticfile.org/blob-polyfill/1.0.20150320/Blob.min.js"></script>
         <script type="text/javascript" src="//cdn.staticfile.org/FileSaver.js/1.3.8/FileSaver.min.js"></script>
         <script type="text/javascript" src="//cdn.staticfile.org/html2canvas/0.5.0-beta4/html2canvas.min.js"></script> 
+        <script type="text/javascript" src="//cdn.staticfile.org/jquery.qrcode/1.0/jquery.qrcode.min.js"></script> 
 
         <style>
             .weui-bar__item_on i, .weui-bar__item_on .weui-tabbar__label{
@@ -230,6 +231,14 @@
                 out.write("上报单位不存在或已关闭");
                 return;
             }
+            //跳转到正确的版本
+            if (!"super".equals(doc.get("admin"))) {
+                String ver = doc.getOrDefault("ver", "2.0").toString();
+                if (request.getRequestURI().indexOf(String.format("%s.jsp", ver)) == -1) {
+                    response.sendRedirect(String.format("%s.jsp?state=%s", ver, fid));
+                }
+            }
+ 
             Document appcfg = doc;
             doc.remove("data");//删除具体的数据
             out.println("<script>");
@@ -237,21 +246,10 @@
             out.println(JSON.toJSONString(doc));
             out.println(";</script>");
         %>
-        <script>
-            var ua = navigator.userAgent.toLowerCase();
-            if (ua.match(/MicroMessenger/i) == "micromessenger") {
-                window.inWeChat = true;
-                wx.miniProgram.getEnv((res) => {
-                    window.inMiniProgram = (res.miniprogram);
-                })
-            } else {
-                window.inWeChat = false;
-            }
-        </script>
     </head>
-    <body ontouchstart style="overflow-x: hidden;margin: 0;">
+    <body ontouchstart >
         <div class="weui-toptips weui-toptips_warn js_tooltips">错误提示</div>     
-        <div class="container" id="container">
+        <div class="container" id="container"  style="max-width:800px;margin-left: auto;margin-right: auto;">
         </div>    
         <div class="weui-footer_fixed-bottom" style="z-index:100;bottom: 0px; border-bottom: 2px solid #f7f7fa;">  
             <div class="weui-tabbar"  id="tabbar"  >
@@ -413,16 +411,17 @@
                         <div class="weui-cells__title" style="color:red">*每日可多次上报，以最后一次为准</div>
                         <a class="weui-btn weui-btn_primary" href="javascript:submit()">上报</a>
                     </div> 
+                    <div id="qr" style="text-align:center;font-size: 12px; color: #888;" ></div>
                 </div>
-                <div class="weui-footer page__ft" style="margin:100px 0;">
+                <div class="weui-footer page__ft" style="margin:50px 0;">
                     <p class="weui-footer__links">
                         <a href="javascript:void(0);" class="weui-footer__link"><span class='company'><% out.print(appcfg.getOrDefault("company", "赛思美科")); %></span>&nbsp;数据所有© 2020年</a> 
                     </p> 
                     <p class="weui-footer__links">
-                        <a href="<% out.print(appcfg.getOrDefault("supporturl", "https://csmake.com"));%>" class="weui-footer__link" style="font-size: 12px;"><span class='support'><% out.print(appcfg.getOrDefault("support", "赛思美科"));%></span>&nbsp;<% out.print(appcfg.getOrDefault("supporttype", "技术支持"));%></a> 
+                        <a href="<% out.print(appcfg.getOrDefault("supporturl", "http://www.csmake.com"));%>" class="weui-footer__link" style="font-size: 12px;"><span class='support'><% out.print(appcfg.getOrDefault("support", "赛思美科"));%></span>&nbsp;<% out.print(appcfg.getOrDefault("supporttype", "技术支持"));%></a> 
                     </p>  
                 </div>
-            </div> 
+            </div>                     
             <script>
                 function submit() {
                     if (!window.user._id) {
@@ -432,7 +431,7 @@
                     }
                     dbhelp(function (db) {
                         var now = new Date().getTime();
-                        var diary = {time: now};
+                        var diary = {time: now, phone: window.user.phone, name: window.user.name, department: window.user.department, company: window.user.company, pid: appcfg.id};
                         var subjects = $(".subject");
                         subjects.find(".subject_title").removeClass("red");
                         for (var i = 0; i < subjects.length; i++) {
@@ -469,13 +468,20 @@
                             console.log(cache);
                             store.set("input-cache", cache);
                         }
-                        var filter = {"date": moment(now).format("YYYYMMDD"), "phone": window.user.phone, pid: appcfg.id, "name": window.user.name || '', "company": window.user.company || '', "department": window.user.department || ''};
+                        var filter = {"date": moment(now).format("YYYYMMDD"), pid: appcfg.id};
+                        if ((window.user.phone || "").length > 0) {
+                            filter.phone = window.user.phone;
+                        } else {
+                            filter.name = window.user.name;
+                            filter.department = window.user.department;
+                        }
+                        diary.date = filter.date;
                         var table = appcfg.diarytable || ("diary" + appcfg.suffix);
                         db.findOneAndUpdate({done: function (doc) {
                                 console.log(doc);
                                 if (doc._id) {
                                     toast("上报成功");
-                                    store.set("diary" + hashCode(appcfg.template.title), $.extend(filter, diary));
+                                    store.set("diary" + hashCode(appcfg.name), $.extend(filter, diary));
                                     $("#diary").html("最近一次提交<br>" + moment(diary.time).format("MM月DD日 HH:mm"));
                                 } else {
                                     toast("上报失败");
@@ -882,7 +888,7 @@
                     keys.push(sbj.key);
                     thead += "<th>" + (sbj.title || '') + "</th>";
                 }
-                thead += "<th>填写时间</th></tr>";
+                thead += "<th>填报时间</th></tr>";
                 window.tbkeys = keys;
                 $("#mytable thead").html(thead);
                 dbhelp(function (db) {
@@ -969,7 +975,7 @@
     <script src="js/q.js"></script>   
     <script src="js/org.dbcloud.mongodb.Collections.js"></script>                          
     <script src="./js/com.csmake.sms.js"></script>
-    <script src="./js/com.csmake.tjb.api.js"></script>   
+    <script src="./js/com.csmake.tjb.api.js"></script>        
     <script>
             function logout() {
                 weui.alert("注销成功！");
@@ -1207,6 +1213,19 @@
                     db.findOneAndUpdate({done: function (doc) {
                             weui.alert("已经升级到" + ver);
                             window.appcfg = doc;
+                            var template = doc.template;
+                            if (ver === "3.0" && typeof template === "object") {
+                                template.private = true;
+                                template.pid = appcfg.id;
+                                template.group = window.user.group || [window.user.department];
+                                db.findOneAndUpdate({done: function (doc) {
+                                        console.log(doc);
+                                        weui.toast("模板已迁移");
+                                    }, fail: Fail}, "template", {id: "T" + (appcfg._id), pid: appcfg.id}, {"$set": template}, {upsert: true, returnNew: true});
+                            }
+                            setTimeout(function () {
+                                location.reload();
+                            }, 3000);
                         }, fail: function (e) {
                             weui.alert(e.message);
                         }, always: function () {
@@ -1214,7 +1233,7 @@
                 });
             }
             function upgrade() {
-                var items = [{label: "1.0"}, {label: "2.0"}];
+                var items = [ {label: "2.0"}, {label: "3.0"}];
                 weui.picker(items, {
                     id: "done_upgrade",
                     onConfirm: function (result) {
@@ -1398,6 +1417,29 @@
                     $(".mydepartment").text(window.user.department || '');
                     $(".today").text(moment().format("LL"));
                     $("#tjbtitle").text(appcfg.template.title);
+                    var url = window.location.href.split('#')[0];
+                    $("#qr").html('<p>浏览器访问：</p><p>' + url + '</p><div id="qrcode" style="margin:40px auto; text-align: center;"></div>').find("#qrcode").empty().qrcode({render: "canvas", ecLevel: "L", width: 134, height: 134, background: "#fff", fill: "#000", text: url});
+                    if (window.user._id)
+                    {//更新用户数据
+                        dbhelp(function () {
+                            var now = new Date().getTime();
+                            db.findOneAndUpdate({done: function (doc) {
+                                    if (doc) {
+                                        store.set("com-tjb", doc);
+                                        window.appcfg = doc;
+                                    }
+                                }, fail: Fail, always: function () {
+                                    db.findOneAndUpdate({done: function (doc) {
+                                            if (doc) {
+                                                store.set("user-tjb", doc);
+                                                window.user = doc;
+                                                window.user.group = window.user.group || [window.user.department];
+                                            }
+                                            console.log("数据库已更新");
+                                        }, fail: Fail}, "user" + appcfg.suffix, {_id: window.user._id}, {$set: {time: now}});
+                                }}, "company", {_id: window.appcfg._id}, {$set: {time: now}});
+                        });
+                    }
                 })
                 Q.reg('mgr', function () {
                     var html = "";
@@ -1643,6 +1685,19 @@
                         var that = $(this);
                         pickDepartment(that);
                     });
+                    page.on("blur", "input[name='phone']", function () {
+                        var phone = $(this).val().trim();
+                        dbhelp(function (db) {
+                            db.find({done: function (list) {
+                                    if (list && list.length > 0) {
+                                        var doc = list[0];
+                                        page.find("input[name='name']").val(doc.name || "");
+                                        page.find("input[name='department']").val(doc.department || "");
+                                        page.find("input[name='company']").val(doc.company || "");
+                                    }
+                                }, fail: Fail}, "user" + appcfg.suffix, {phone: phone}, {limit: 1, skip: 0});
+                        });
+                    });
                 });
                 Q.reg('china', function (id) { 
                         var pg = $(".page").html('<iframe src=" https://voice.baidu.com/act/newpneumonia/newpneumonia" seamless scrolling="auto" frameborder=0; style="margin:0;padding:0; width:100%;height: ' + (window.screen.availHeight - 50 + 'px') + '"></iframe>');                   
@@ -1667,7 +1722,14 @@
                     var html = $('script#tpl_users').html();
                     $(".container").html(html).find(".page").css({opacity: 1, height: window.screen.availHeight - 50 + 'px'});
                 });
-
+                Q.reg('help', function (id) {
+                    var html = "<div>";
+                    for (var i = 40; i < 50; i++) {
+                        html += "<img style='width:100%;' src='image/help/v" + i + ".jpeg'>";
+                    }
+                    html += "</div>";
+                    $(".container .page").html(html);
+                });
                 /* 启动函数 */
                 Q.init({
                     key: '', /* url里#和url名之间的分割符号 默认为感叹号 */
@@ -1702,8 +1764,9 @@
                                             if (doc) {
                                                 store.set("user-tjb", doc);
                                                 window.user = doc;
+                                                window.user.group = window.user.group || [window.user.department];
                                             }
-                                            console.log("应用已升级");
+                                            console.log("数据库已更新");
                                         }, fail: Fail}, "user" + appcfg.suffix, {_id: window.user._id}, {$set: {time: now}});
                                 }}, "company", {_id: window.appcfg._id}, {$set: {time: now}});
                         });
